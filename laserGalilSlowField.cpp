@@ -61,6 +61,22 @@ osgText::Text* myText = new osgText::Text();
 
 inline double deg2rad(const double val) { return val*0.0174532925199432957692369076848861;}
 
+
+float sigmoid(float x)
+{
+     float exp_value;
+     float return_value;
+
+     /*** Exponential calculation ***/
+     exp_value = exp((double) -x);
+
+     /*** Final sigmoid value ***/
+     return_value = 1 / (1 + exp_value);
+
+     return return_value;
+}
+
+
 int fd_serialport;
 int byteCounter = 0;
 unsigned char inputBuffer[255];
@@ -362,10 +378,10 @@ void updateVerts()
         
         //this is the braking buffer between the decel and stop zones
         // half of the stop size for starters
-        #define y_brakezone 61 //61
+        #define y_brakezone 120 //61
 
         // this is the total distance of the stop field plus the decel zone 
-        #define y_distance (y_forward+y_brakezone+y_fullspeed)
+        #define y_distance (y_forward+y_brakezone+2.5*y_fullspeed)
 
 	//saving the angle for the closest measurement
 	if((int)meas < closest_meas && y>0){
@@ -420,8 +436,9 @@ void updateVerts()
     tdist = closest_y_cm - (y_forward+y_brakezone);
     if (tdist < 0){
 	tdist = 0;}
-    speed = sqrt (2.0*tdist * decel_cm);
-    if (speed > velocity_cm) speed = velocity_cm;
+ //   speed = sqrt (2.0*tdist * decel_cm);
+    speed = 7*pow (tdist/(y_distance),2)/3;
+    if (speed > 1) speed = 1;
     if (speed < 0) speed = 0;
     if (stop) speed = 0;
     if (speed != speed){
@@ -436,7 +453,7 @@ void updateVerts()
     // sendMessage  = speed;
     char speedChar[21];
 
-    float percent_speed = speed/velocity_cm;
+    float percent_speed = speed;
     sprintf(speedChar,"%f",percent_speed);
     sendGalilFullCommand = sendCommand+speedChar+"\r"; 
     //printf("The sent command is %s\n",sendGalilFullCommand);
