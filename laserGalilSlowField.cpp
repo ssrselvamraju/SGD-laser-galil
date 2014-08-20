@@ -436,8 +436,8 @@ void updateVerts()
     tdist = closest_y_cm - (y_forward+y_brakezone);
     if (tdist < 0){
 	tdist = 0;}
- //   speed = sqrt (2.0*tdist * decel_cm);
-    speed = 7*pow (tdist/(y_distance),2)/3;
+    speed = sqrt (2.0*tdist * decel_cm);
+ //   speed = 7*pow (tdist/(y_distance),2)/3;
     if (speed > 1) speed = 1;
     if (speed < 0) speed = 0;
     if (stop) speed = 0;
