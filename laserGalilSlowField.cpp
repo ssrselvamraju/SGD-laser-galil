@@ -420,8 +420,10 @@ void updateVerts()
     tdist = closest_y_cm - (y_forward+y_brakezone);
     if (tdist < 0){
 	tdist = 0;}
-    speed = sqrt (2.0*tdist * decel_cm);
-    if (speed > velocity_cm) speed = velocity_cm;
+    speed = (2 / (1+ exp (-tdist/y_distance)))-1;
+    if (speed > 1.0) speed = 1.0;
+    //speed = sqrt (2.0*tdist * decel_cm);
+    //if (speed > velocity_cm) speed = velocity_cm;
     if (speed < 0) speed = 0;
     if (stop) speed = 0;
     if (speed != speed){
@@ -436,7 +438,8 @@ void updateVerts()
     // sendMessage  = speed;
     char speedChar[21];
 
-    float percent_speed = speed/velocity_cm;
+    float percent_speed = speed;
+    //float percent_speed = speed/velocity_cm;
     sprintf(speedChar,"%f",percent_speed);
     sendGalilFullCommand = sendCommand+speedChar+"\r"; 
     //printf("The sent command is %s\n",sendGalilFullCommand);
