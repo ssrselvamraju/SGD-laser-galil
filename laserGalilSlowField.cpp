@@ -378,10 +378,10 @@ void updateVerts()
         
         //this is the braking buffer between the decel and stop zones
         // half of the stop size for starters
-        #define y_brakezone 120 //61
+        #define y_brakezone 150 //61
 
         // this is the total distance of the stop field plus the decel zone 
-        #define y_distance (y_forward+y_brakezone+2.5*y_fullspeed)
+        #define y_distance (y_forward+y_brakezone+2*y_fullspeed)
 
 	//saving the angle for the closest measurement
 	if((int)meas < closest_meas && y>0){
@@ -437,7 +437,8 @@ void updateVerts()
     if (tdist < 0){
 	tdist = 0;}
  //   speed = sqrt (2.0*tdist * decel_cm);
-    speed = 7*pow (tdist/(y_distance),2)/3;
+  //  speed = 7*pow (tdist/(y_distance),2)/3;
+    speed = pow(tdist/(2*y_fullspeed),1.5);
     if (speed > 1) speed = 1;
     if (speed < 0) speed = 0;
     if (stop) speed = 0;
